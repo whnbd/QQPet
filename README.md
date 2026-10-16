@@ -54,12 +54,6 @@ npm install
 npm run dev
 ```
 
-### 代码规范
-
-```bash
-npm run format   # Prettier 格式化
-npm run lint     # ESLint 检查
-```
 
 ### 生产构建 / 打包
 
