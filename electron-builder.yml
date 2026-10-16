@@ -1,0 +1,53 @@
+appId: com.qqpet.desktop
+productName: QQ宠物
+directories:
+  buildResources: build
+compression: maximum # NSIS 安装包 LZMA2 最大压缩，减小安装包体积
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  # 剔除 Ruffle 兜底构建与 sourcemap：Electron 39（现代 Chromium）WASM 扩展全可用，
+  # 只会加载 core.ruffle.16d61072 + 172de42e 这对，兜底对与 *.map 均为死重量
+  - '!out/renderer/ruffle/*.map'
+  - '!out/renderer/ruffle/core.ruffle.994eeef0a471a88cd0e3.js'
+  - '!out/renderer/ruffle/878d548199cddef07035.wasm'
+asarUnpack:
+  - resources/**
+win:
+  executableName: qqpet
+  icon: resources/assets/penguin.ico # 应用 exe 与安装包图标统一用企鹅图标
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  oneClick: false # 向导式安装，可选择安装目录
+  allowToChangeInstallationDirectory: true
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: true # 向导中显示"创建桌面快捷方式"勾选项，由用户决定
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    - NSCameraUsageDescription: Application requests access to the device's camera.
+    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  notarize: false
+dmg:
+  artifactName: ${name}-${version}.${ext}
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: electronjs.org
+  category: Utility
+appImage:
+  artifactName: ${name}-${version}.${ext}
+npmRebuild: false
+publish:
+  provider: generic
+  url: https://example.com/auto-updates
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/
