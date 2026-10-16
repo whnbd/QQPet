@@ -1,34 +1,97 @@
-# QQPet
+# QQ宠物 (QQPet)
 
-An Electron application with Vue
+一个复刻经典「QQ宠物」桌面宠物的跨平台桌面应用，基于 **Electron + Vue 3** 构建。宠物以 **Flash（Ruffle）动画** 呈现，支持领养、喂食、清洁、养宠升级、商店购物、迷你小游戏与宠物档案等完整养成玩法。
 
-## Recommended IDE Setup
+## 功能特性
+
+- **桌面宠物**：透明无边框独立窗口，宠物在桌面上待机、走动、贴边隐藏；左键拖拽移动、单击互动、右键弹出原生菜单。
+- **领养体系**：首次启动弹出领养窗，选择性别（GG / MM）并命名，领养后播放出生动画。
+- **状态养成**：饱食度 / 清洁度 / 健康度 / 心情等属性随时间变化，喂食、清洁、闲聊等动作实时影响。
+- **等级经验**：经验满自动升级，宠物随等级成长（蛋期 → 幼年期 → 成年期），不同阶段更换外观动画。
+- **商店**：购买圈圈、一心、六角形等宠物食物与道具，实时消耗元宝（金币）。
+- **小游戏**：内置 Flash 小游戏，由 Ruffle 运行时在浏览器内播放；游玩可获得元宝奖励。
+- **宠物档案**：以档案卡形式展示昵称、主人、等级、阶段、经验与四维属性条。
+- **背包系统**：管理已拥有的道具与饰品。
+- **托盘图标**：系统托盘常驻，图标随宠物性别切换。
+
+## 技术栈
+
+- **Electron** ^39 — 桌面壳与原生能力（窗口、托盘、菜单、IPC）
+- **Vue 3** ^3.5 — 渲染层 UI
+- **electron-vite** ^5 — 构建与开发工具链
+- **Vite / @vitejs/plugin-vue** ^7 / ^6
+- **electron-builder** ^26 — 安装包打包（NSIS / dmg / AppImage）
+- **Ruffle** — 在浏览器端运行 Flash SWF 动画与游戏
+- **ESLint + Prettier** — 代码规范与格式化
+
+## 界面结构
+
+应用由多个透明/无边框窗口组成，通过 Vue 组件承载：
+
+| 窗口 | 页面 | 说明 |
+|---|---|---|
+| 主窗口 | `App.vue` | 桌面宠物本体：Flash 动画 + 覆盖层交互 + 文字气泡 |
+| 登录窗 | `login/LoginDlg.vue` | 登录 / 账号存档 |
+| 领养窗 | `petselect/PetSelect.vue` | 选择性别并命名 |
+| 菜单窗 | `menu/MenuView.vue` | 功能菜单入口（背包 / 商店 / 小游戏 / 宠物信息等） |
+| 中心窗 | `center/CenterView.vue` | 700×520 合并窗口，顶部标签切换 [商店] [小游戏] [宠物信息] |
+| 背包窗 | `bag/BagView.vue` | 道具与饰品管理 |
+
+> 商店 / 小游戏 / 宠物信息三个页面共用 `CenterView.vue`，用 `v-show` 切换，切换标签时实例不销毁、状态保留。
+
+## 数据存储
+
+宠物数据保存在渲染层的 **localStorage**（以 `qqpet.*` 为键），包括：性别 `gender`（GG/MM）、昵称 `name`、主人 `savedQq`、等级 `level`、经验 `exp`、饱食 / 清洁 / 健康（0-100）、心情（0-1000）、元宝 `coins`、背包 `inventory`。状态机与数据交互核心在 `src/renderer/src/composables/usePetMachine.js`，Flash 播放封装在 `src/renderer/src/components/FlashPlayer.vue`。
+
+## 项目结构
+
+```
+QQPet
+├── build/                       # 打包资源（图标、mac 权限配置）
+├── resources/                   # 运行时资源（宠物素材、图标）
+├── spec/                        # 需求规格与任务拆分文档
+├── src/
+│   ├── main/index.js            # Electron 主进程（窗口、托盘、菜单、IPC）
+│   ├── preload/index.js         # 预加载脚本（暴露 window.api）
+│   └── renderer/                # 渲染层（Vue 应用与各窗口页面）
+└── electron-builder.yml         # 打包配置
+```
+
+## 推荐的 IDE 设置
 
 - [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 
-## Project Setup
+## 项目设置
 
-### Install
-
-```bash
-$ npm install
-```
-
-### Development
+### 安装依赖
 
 ```bash
-$ npm run dev
+npm install
 ```
 
-### Build
+### 启动开发
 
 ```bash
-# For windows
-$ npm run build:win
-
-# For macOS
-$ npm run build:mac
-
-# For Linux
-$ npm run build:linux
+npm run dev
 ```
+
+### 代码规范
+
+```bash
+npm run format   # Prettier 格式化
+npm run lint     # ESLint 检查
+```
+
+### 生产构建 / 打包
+
+```bash
+# 仅构建（out/ 目录，不打包安装包）
+npm run build
+
+# 打包安装包
+npm run build:win    # Windows（NSIS 安装器）
+npm run build:mac    # macOS（dmg）
+npm run build:linux  # Linux（AppImage / snap / deb）
+```
+
+> Windows 安装包产物位于 `dist/`，如 `qqpet-<版本>-setup.exe`（向导式安装，可选择安装目录并创建桌面快捷方式）。
