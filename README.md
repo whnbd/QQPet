@@ -39,27 +39,6 @@
 
 > 商店 / 小游戏 / 宠物信息三个页面共用 `CenterView.vue`，用 `v-show` 切换，切换标签时实例不销毁、状态保留。
 
-## 数据存储
-
-宠物数据保存在渲染层的 **localStorage**（以 `qqpet.*` 为键），包括：性别 `gender`（GG/MM）、昵称 `name`、主人 `savedQq`、等级 `level`、经验 `exp`、饱食 / 清洁 / 健康（0-100）、心情（0-1000）、元宝 `coins`、背包 `inventory`。状态机与数据交互核心在 `src/renderer/src/composables/usePetMachine.js`，Flash 播放封装在 `src/renderer/src/components/FlashPlayer.vue`。
-
-## 项目结构
-
-```
-QQPet
-├── build/                       # 打包资源（图标、mac 权限配置）
-├── resources/                   # 运行时资源（宠物素材、图标）
-├── spec/                        # 需求规格与任务拆分文档
-├── src/
-│   ├── main/index.js            # Electron 主进程（窗口、托盘、菜单、IPC）
-│   ├── preload/index.js         # 预加载脚本（暴露 window.api）
-│   └── renderer/                # 渲染层（Vue 应用与各窗口页面）
-└── electron-builder.yml         # 打包配置
-```
-
-## 推荐的 IDE 设置
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 
 ## 项目设置
 
