@@ -22,7 +22,7 @@
 - **Vite / @vitejs/plugin-vue** ^7 / ^6
 - **electron-builder** ^26 — 安装包打包（NSIS / dmg / AppImage）
 - **Ruffle** — 在浏览器端运行 Flash SWF 动画与游戏
-- **ESLint + Prettier** — 代码规范与格式化
+
 
 ## 界面结构
 
